@@ -1,0 +1,17 @@
+{
+  "name": "blacio-destinations",
+  "version": "1.0.0",
+  "description": "Destinations API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Blacio Baez Caceres",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "express": "^5.2.1",
+    "mongoose": "^9.0.1"
+  }
+}
