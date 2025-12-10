@@ -34,7 +34,7 @@ router.post("/virtualMachine", async (req, res) => {
   const storage = Number(req.body.storage);
 
   if (isNaN(ram) || isNaN(cpu) || isNaN(storage)) {
-    return res.status(400).json({ message: "ram, cpu y storage deben ser numéricos" });
+    return res.status(400).json({ message: "ram, cpu and storage must be numeric" });
   }
 
   const totalPrice =
