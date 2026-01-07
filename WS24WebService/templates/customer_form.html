@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">
+                    <i class="bi bi-person-plus-fill"></i> {{ title }}
+                </h3>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="" novalidate>
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="row">
+                        <!-- Customer ID -->
+                        <div class="col-md-6 mb-3">
+                            <label for="id" class="form-label">{{ form.id.label.text }} <span class="text-danger">*</span></label>
+                            {{ form.id(class="form-control" + (" is-invalid" if form.id.errors else "")) }}
+                            {% if form.id.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.id.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Full Name -->
+                        <div class="col-md-6 mb-3">
+                            <label for="full_name" class="form-label">{{ form.full_name.label.text }} <span class="text-danger">*</span></label>
+                            {{ form.full_name(class="form-control" + (" is-invalid" if form.full_name.errors else "")) }}
+                            {% if form.full_name.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.full_name.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!-- Email -->
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label">{{ form.email.label.text }} <span class="text-danger">*</span></label>
+                            {{ form.email(type="email", class="form-control" + (" is-invalid" if form.email.errors else "")) }}
+                            {% if form.email.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.email.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Customer Type -->
+                        <div class="col-md-6 mb-3">
+                            <label for="type" class="form-label">{{ form.type.label.text }} <span class="text-danger">*</span></label>
+                            {{ form.type(class="form-select" + (" is-invalid" if form.type.errors else "")) }}
+                            {% if form.type.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.type.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!-- Discount -->
+                        <div class="col-md-6 mb-3">
+                            <label for="discount" class="form-label">{{ form.discount.label.text }} <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                {{ form.discount(class="form-control" + (" is-invalid" if form.discount.errors else "")) }}
+                                <span class="input-group-text">%</span>
+                                {% if form.discount.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.discount.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Total Sale -->
+                        <div class="col-md-6 mb-3">
+                            <label for="total_sale" class="form-label">{{ form.total_sale.label.text }} <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                {{ form.total_sale(class="form-control" + (" is-invalid" if form.total_sale.errors else "")) }}
+                                {% if form.total_sale.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.total_sale.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Buttons -->
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('customer.index') }}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> Save Customer
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Help Text -->
+        <div class="alert alert-light mt-3">
+            <small class="text-muted">
+                <i class="bi bi-info-circle"></i> 
+                <span class="text-danger">*</span> Required fields
+            </small>
+        </div>
+    </div>
+</div>
+{% endblock %}
