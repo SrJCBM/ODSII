@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+:root {
+  --deuna-purple: #5B21B6;
+  --deuna-purple-dark: #4C1D95;
+  --deuna-green: #10B981;
+  --deuna-gray: #F3F4F6;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: #F9FAFB;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c4b5fd;
+  border-radius: 4px;
+}
+
+/* Input focus styles */
+input:focus {
+  outline: none;
+  border-color: #5B21B6;
+  box-shadow: 0 0 0 3px rgba(91, 33, 182, 0.1);
+}
+
+/* Button transitions */
+button {
+  transition: all 0.2s ease;
+}
+
+/* Safe area for mobile */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
