@@ -13,23 +13,23 @@ Clon simplificado de Deuna para proyecto universitario.
 1. Crear nuevo Web Service
 2. Conectar repositorio
 3. Configurar:
-   - **Root Directory**: `backend`
+   - **Root Directory**: `deuna/backend`
    - **Build Command**: `npm install`
    - **Start Command**: `node server.js`
    - **Environment Variables**:
-     - `MONGODB_URI` - String de conexión a MongoDB
-     - `JWT_SECRET` - Secreto para tokens JWT
-     - `NODE_ENV` - `production`
+     - `MONGODB_URI` - String de conexión a MongoDB Atlas
+     - `JWT_SECRET` - Secreto para tokens JWT (ej: `mi_secreto_super_seguro_2026`)
+     - `FRONTEND_URL` - (Opcional) URL del frontend para CORS (ej: `https://deuna-app.onrender.com`)
 
 ### Frontend (Static Site)
 1. Crear nuevo Static Site
 2. Conectar repositorio
 3. Configurar:
-   - **Root Directory**: `frontend`
+   - **Root Directory**: `deuna/frontend`
    - **Build Command**: `npm install && npm run build`
    - **Publish Directory**: `dist`
    - **Environment Variables**:
-     - `VITE_API_URL` - URL del backend (ej: https://deuna-api.onrender.com/api)
+     - `VITE_API_URL` - URL del backend (ej: `https://deuna-api.onrender.com/api`)
 
 ## Desarrollo Local
 
