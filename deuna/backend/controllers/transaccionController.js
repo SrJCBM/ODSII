@@ -25,6 +25,7 @@ exports.getTransacciones = async (req, res, next) => {
       const esEmisor = t.emisor_id._id.toString() === userId;
       return {
         id: t._id,
+        numero_transaccion: t.numero_transaccion,
         tipo: t.tipo,
         monto: t.monto,
         fuente: t.fuente,

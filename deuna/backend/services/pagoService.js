@@ -96,6 +96,7 @@ class PagoService {
     // 10. Retornar resultado completo
     return {
       transaccion: transaccion.toJSON(),
+      qr_validacion: transaccion.numero_transaccion, // QR para validar el pago
       emisor: {
         nombre: emisor.nombre,
         apellido: emisor.apellido,

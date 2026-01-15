@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { QRCodeSVG } from 'react-qr-code';
 import { pagoAPI } from '../services/api';
 import { useAuthStore } from '../store/authStore';
 import Avatar from '../components/Avatar';
@@ -293,18 +294,30 @@ export default function ConfirmarPago() {
                   })}
                 </span>
               </div>
-              <div className="flex justify-between">
+              <div className="flex justify-between items-center">
                 <span className="text-purple-700 font-medium">Nro. de transacción</span>
-                <span className="text-gray-600">{resultado?.transaccion?._id?.slice(-8) || '...'}</span>
+                <span className="text-gray-600 font-mono text-xs">
+                  {resultado?.transaccion?.numero_transaccion || resultado?.qr_validacion || '...'}
+                </span>
               </div>
             </div>
 
-            {/* QR placeholder */}
-            <div className="mt-4 p-4 bg-gray-100 rounded-xl">
-              <div className="w-32 h-32 mx-auto bg-white rounded-lg flex items-center justify-center">
-                <span className="text-purple-700 font-bold text-2xl">d!</span>
+            {/* QR de validación */}
+            {resultado?.qr_validacion && (
+              <div className="mt-4">
+                <p className="text-gray-500 text-sm mb-2">Comprobante de pago</p>
+                <div className="p-4 bg-white rounded-xl border-2 border-purple-200">
+                  <QRCodeSVG 
+                    value={resultado.qr_validacion} 
+                    size={160}
+                    className="mx-auto"
+                  />
+                  <p className="text-center text-xs text-gray-500 mt-2 font-mono">
+                    {resultado.qr_validacion}
+                  </p>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>

@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 
 const transaccionSchema = new mongoose.Schema({
+  numero_transaccion: {
+    type: String,
+    unique: true,
+    required: true
+  },
   tipo: {
     type: String,
     enum: ['pago_qr', 'recarga', 'transferencia'],
@@ -47,10 +52,31 @@ const transaccionSchema = new mongoose.Schema({
   timestamps: true
 });
 
+// Generar número de transacción único antes de guardar
+transaccionSchema.pre('save', async function(next) {
+  if (!this.numero_transaccion) {
+    // Formato: TXYYYYMMDD-NNNNNNNN (TX + fecha + 8 dígitos random)
+    const fecha = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+    let numeroUnico;
+    let existe = true;
+
+    // Generar hasta encontrar uno único
+    while (existe) {
+      const random = Math.floor(10000000 + Math.random() * 90000000); // 8 dígitos
+      numeroUnico = `TX${fecha}-${random}`;
+      existe = await mongoose.models.Transaccion.findOne({ numero_transaccion: numeroUnico });
+    }
+
+    this.numero_transaccion = numeroUnico;
+  }
+  next();
+});
+
 // Método para formato de respuesta
 transaccionSchema.methods.toJSON = function() {
   return {
     id: this._id,
+    numero_transaccion: this.numero_transaccion,
     tipo: this.tipo,
     emisor_id: this.emisor_id,
     receptor_id: this.receptor_id,

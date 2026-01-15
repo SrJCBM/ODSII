@@ -136,14 +136,19 @@ export default function Billetera() {
                         </div>
                         <div>
                           <p className="font-medium text-gray-900">
-                            {esEnvio ? 'Pago enviado' : 'Pago recibido'}
+                            {tx.contraparte?.nombre} {tx.contraparte?.apellido}
                           </p>
                           <p className="text-xs text-gray-500">
-                            {tx.descripcion || tx.tipo}
+                            {esEnvio ? 'Pago enviado' : 'Pago recibido'}
                             {tx.recarga_automatica && (
                               <span className="ml-1 text-green-600">• Recarga auto</span>
                             )}
                           </p>
+                          {tx.numero_transaccion && (
+                            <p className="text-xs text-gray-400 font-mono">
+                              {tx.numero_transaccion}
+                            </p>
+                          )}
                         </div>
                       </div>
                       <div className="text-right">
