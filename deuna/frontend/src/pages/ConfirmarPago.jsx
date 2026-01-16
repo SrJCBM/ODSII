@@ -10,12 +10,13 @@ import { formatMonto, mascararCuenta } from '../utils/helpers';
 export default function ConfirmarPago() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { receptor, qrCode } = location.state || {};
+  const { receptor, qrCode, montoPreset } = location.state || {};
   const { user, refreshUser } = useAuthStore();
   
-  const [monto, setMonto] = useState('');
+  // Si viene monto del QR, usarlo y saltar a confirmación
+  const [monto, setMonto] = useState(montoPreset ? montoPreset.toString().replace('.', ',') : '');
   const [descripcion, setDescripcion] = useState('');
-  const [step, setStep] = useState('monto'); // 'monto' | 'confirmar' | 'resultado'
+  const [step, setStep] = useState(montoPreset ? 'confirmar' : 'monto'); // Si hay monto preset, ir directo a confirmar
   const [loading, setLoading] = useState(false);
   const [resultado, setResultado] = useState(null);
   const [error, setError] = useState('');
@@ -59,6 +60,12 @@ export default function ConfirmarPago() {
   };
 
   const handlePagar = async () => {
+    // Validar monto antes de pagar
+    if (montoNumerico <= 0) {
+      setError('El monto debe ser mayor a 0');
+      return;
+    }
+    
     setLoading(true);
     setError('');
     

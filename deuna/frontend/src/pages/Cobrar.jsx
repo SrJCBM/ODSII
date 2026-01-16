@@ -69,10 +69,13 @@ export default function Cobrar() {
               </div>
             )}
 
-            {/* QR Code */}
+            {/* QR Code - incluye monto si está especificado */}
             <div className="p-4 bg-white border-2 border-gray-100 rounded-xl inline-block">
               <QRCode
-                value={user?.qr_code || ''}
+                value={montoNumerico > 0 
+                  ? `${user?.qr_code}|${montoNumerico.toFixed(2)}`
+                  : (user?.qr_code || '')
+                }
                 size={180}
                 level="H"
                 style={{ height: "auto", maxWidth: "100%", width: "100%" }}

@@ -29,13 +29,29 @@ export default function PagarQR() {
     }
   }, []);
 
-  const handleScan = useCallback(async (qrCode) => {
+  const handleScan = useCallback(async (qrContent) => {
     setScanning(false);
     stopScanning();
     
     try {
+      // Parsear QR: puede ser "CODIGO_QR" o "CODIGO_QR|MONTO"
+      let qrCode = qrContent;
+      let montoPreset = null;
+      
+      if (qrContent.includes('|')) {
+        const parts = qrContent.split('|');
+        qrCode = parts[0];
+        montoPreset = parseFloat(parts[1]) || null;
+      }
+      
       const { data } = await usuarioAPI.getByQR(qrCode);
-      navigate('/confirmar-pago', { state: { receptor: data, qrCode } });
+      navigate('/confirmar-pago', { 
+        state: { 
+          receptor: data, 
+          qrCode,
+          montoPreset // Pasar monto si viene en el QR
+        } 
+      });
     } catch {
       setError('QR no válido o usuario no encontrado');
       setTimeout(() => {
