@@ -78,8 +78,12 @@ class PagoService {
     await emisor.save();
     await receptor.save();
 
-    // 9. Registrar la transacción
+    // 9. Generar número de transacción único
+    const numeroTransaccion = await Transaccion.generarNumeroTransaccion();
+
+    // 10. Registrar la transacción
     const transaccion = await Transaccion.create({
+      numero_transaccion: numeroTransaccion,
       tipo: 'pago_qr',
       emisor_id: emisor._id,
       receptor_id: receptor._id,
@@ -93,7 +97,7 @@ class PagoService {
         : 'Pago QR')
     });
 
-    // 10. Retornar resultado completo
+    // 11. Retornar resultado completo
     return {
       transaccion: transaccion.toJSON(),
       qr_validacion: transaccion.numero_transaccion, // QR para validar el pago
