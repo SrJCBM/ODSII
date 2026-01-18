@@ -1,0 +1,120 @@
+<div class="container">
+  <div class="header">
+    <h1>PLOS Articles Search</h1>
+    <p class="subtitle">Search and explore scientific articles from PLOS journals</p>
+  </div>
+
+  <!-- Search Section -->
+  <div class="search-section">
+    <form (ngSubmit)="onSearch()" class="search-form">
+      <input
+        type="text"
+        [(ngModel)]="searchQuery"
+        name="searchQuery"
+        placeholder="Enter search query (e.g., title:university, author:smith)"
+        class="search-input"
+        [disabled]="isLoading"
+      />
+      <button type="submit" class="search-button" [disabled]="isLoading">
+        <span *ngIf="!isLoading">🔍 Search</span>
+        <span *ngIf="isLoading">Searching...</span>
+      </button>
+      <button type="button" class="export-button" (click)="exportToPdf()" [disabled]="isLoading || articles.length === 0">
+        📄 Export to PDF
+      </button>
+    </form>
+  </div>
+
+  <!-- Results Info -->
+  <div class="results-info" *ngIf="pagination">
+    <p>
+      Showing {{ (pagination.currentPage - 1) * pagination.pageSize + 1 }} - 
+      {{ getMinValue(pagination.currentPage * pagination.pageSize, pagination.totalResults) }} 
+      of {{ pagination.totalResults }} results
+    </p>
+  </div>
+
+  <!-- Error Message -->
+  <div class="error-message" *ngIf="errorMessage">
+    <p>❌ {{ errorMessage }}</p>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div class="loading" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Loading articles...</p>
+  </div>
+
+  <!-- Articles Table -->
+  <div class="table-container" *ngIf="!isLoading && articles.length > 0">
+    <table class="articles-table">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Journal</th>
+          <th>Publication Date</th>
+          <th>DOI</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let article of articles">
+          <td class="title-cell">{{ article.title }}</td>
+          <td>{{ article.journal }}</td>
+          <td>{{ article.publicationDate }}</td>
+          <td class="doi-cell" (dblclick)="onDoiDoubleClick(article.doi)" title="Double-click to open article">
+            {{ article.doi }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- No Results Message -->
+  <div class="no-results" *ngIf="!isLoading && articles.length === 0 && !errorMessage">
+    <p>No articles found. Try a different search query.</p>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination" *ngIf="pagination && pagination.totalPages > 1">
+    <button 
+      class="page-button" 
+      (click)="goToPage(1)" 
+      [disabled]="pagination.currentPage === 1"
+    >
+      ⏮️ First
+    </button>
+    
+    <button 
+      class="page-button" 
+      (click)="goToPage(pagination.currentPage - 1)" 
+      [disabled]="pagination.currentPage === 1"
+    >
+      ◀️ Prev
+    </button>
+    
+    <button 
+      *ngFor="let page of getPageNumbers()" 
+      class="page-button"
+      [class.active]="page === pagination.currentPage"
+      (click)="goToPage(page)"
+    >
+      {{ page }}
+    </button>
+    
+    <button 
+      class="page-button" 
+      (click)="goToPage(pagination.currentPage + 1)" 
+      [disabled]="pagination.currentPage === pagination.totalPages"
+    >
+      Next ▶️
+    </button>
+    
+    <button 
+      class="page-button" 
+      (click)="goToPage(pagination.totalPages)" 
+      [disabled]="pagination.currentPage === pagination.totalPages"
+    >
+      Last ⏭️
+    </button>
+  </div>
+</div>
