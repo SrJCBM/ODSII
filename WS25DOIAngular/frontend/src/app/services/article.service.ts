@@ -10,7 +10,7 @@ import { ApiResponse } from '../models/article.model';
   providedIn: 'root'
 })
 export class ArticleService {
-  private readonly apiUrl = 'http://localhost:3000/api/articles';
+  private readonly apiUrl = 'https://plot-doi-backend.onrender.com/api/articles';
 
   constructor(private http: HttpClient) {}
 
