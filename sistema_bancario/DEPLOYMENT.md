@@ -19,7 +19,7 @@
 - Cuenta en [Supabase](https://supabase.com) (base de datos ya configurada)
 - Git instalado localmente
 - Node.js 18+ y npm
-- Python 3.14+
+- Python 3.12+
 
 ---
 
@@ -54,7 +54,7 @@ services:
     startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION
-        value: 3.14.0
+        value: 3.12.8
       - key: DATABASE_URL
         sync: false
 ```
@@ -138,7 +138,7 @@ git push -u origin main
    Click en **"Advanced"** → **"Add Environment Variable"**:
 
    ```
-   PYTHON_VERSION = 3.14.0
+   PYTHON_VERSION = 3.12.8
    
    DATABASE_URL = postgresql+psycopg://postgres.jvwcivzmhyxbcelkziwe:TbFk9AiP85n7A1Zo@aws-1-us-east-1.pooler.supabase.com:6543/postgres
    ```

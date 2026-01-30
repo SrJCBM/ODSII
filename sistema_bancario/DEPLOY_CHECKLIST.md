@@ -59,7 +59,7 @@ git push -u origin main
    - **Start Command**: `uvicorn main:app --host 0.0.0.0 --port $PORT`
 5. Variables de entorno:
    ```
-   PYTHON_VERSION=3.14.0
+   PYTHON_VERSION=3.12.8
    DATABASE_URL=postgresql+psycopg://postgres.jvwcivzmhyxbcelkziwe:TbFk9AiP85n7A1Zo@aws-1-us-east-1.pooler.supabase.com:6543/postgres
    ```
 6. Click **"Create Web Service"**

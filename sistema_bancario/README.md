@@ -1,7 +1,7 @@
 # 🏦 Sistema de Depósitos - Banco Pichincha
 
-![Python](https://img.shields.io/badge/Python-3.14-blue)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.109-green)
+![Python](https://img.shields.io/badge/Python-3.12-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.115-green)
 ![React](https://img.shields.io/badge/React-19.2-61dafb)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Supabase-orange)
 
@@ -41,11 +41,11 @@ Sistema integral de gestión de depósitos bancarios desarrollado para Banco Pic
 ## 🛠️ Stack Tecnológico
 
 ### Backend
-- **Framework**: FastAPI 0.109.0
+- **Framework**: FastAPI 0.115.6
 - **ORM**: SQLAlchemy 2.0.36
 - **Base de Datos**: PostgreSQL (Supabase Session Pooler IPv4)
 - **Driver**: psycopg 3.1.18 [binary]
-- **Validación**: Pydantic 2.x
+- **Validación**: Pydantic 2.10.6
 - **CORS**: Configurado para producción
 
 ### Frontend
@@ -57,7 +57,7 @@ Sistema integral de gestión de depósitos bancarios desarrollado para Banco Pic
 - **Iconos**: Lucide React
 
 ### Infraestructura
-- **Backend Deploy**: Render (Python 3.14)
+- **Backend Deploy**: Render (Python 3.12.8)
 - **Frontend Deploy**: Render Static Site / Vercel / Netlify
 - **Base de Datos**: Supabase PostgreSQL
 
@@ -119,7 +119,7 @@ sistema_bancario/
 
 ### Prerrequisitos
 
-- Python 3.14+
+- Python 3.12+
 - Node.js 18+
 - npm o yarn
 - Git
