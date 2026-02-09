@@ -67,7 +67,7 @@ export default function Transferir() {
   };
 
   const montoNumerico = parseFloat(monto.replace(',', '.')) || 0;
-  const comision = Math.min(Math.max(montoNumerico * 0.005, 0.10), 5.00);
+  const comision = montoNumerico > 0 ? Math.min(Math.max(montoNumerico * 0.005, 0.10), 5.00) : 0;
   const total = montoNumerico + comision;
 
   const handleConfirmar = async () => {
@@ -76,43 +76,30 @@ export default function Transferir() {
       return;
     }
 
-    if (total > (user?.saldo_deuna || 0)) {
-      setError('Saldo insuficiente. Se recargará automáticamente desde BP si hay fondos.');
-    }
-
     setLoading(true);
     setError('');
 
     try {
       const payload = {
+        destinatario: destino, // El backend acepta cuenta, telefono o correo en un solo campo
         monto: montoNumerico,
-        descripcion: descripcion || 'Transferencia Deuna',
-        fuente: 'deuna'
+        descripcion: descripcion || 'Transferencia Deuna'
       };
-
-      // Agregar el identificador del destinatario
-      if (tipoDestino === 'cuenta') {
-        payload.cuenta_destino = destino;
-      } else if (tipoDestino === 'telefono') {
-        payload.telefono_destino = destino;
-      } else {
-        payload.correo_destino = destino;
-      }
 
       const { data } = await api.post('/transferencias', payload);
       await refreshUser();
       
       setSuccess({
         monto: montoNumerico,
-        comision: data.transaccion.comision || comision,
-        total: data.transaccion.monto_total || total,
+        comision: data.transaccion?.comision || comision,
+        total: data.transaccion?.monto_total || total,
         destinatario: destinatario,
-        numero_transaccion: data.transaccion.numero_transaccion,
+        numero_transaccion: data.transaccion?.numero_transaccion,
         nuevoSaldo: user?.saldo_deuna - total,
-        recarga_automatica: data.transaccion.recarga_automatica
+        recarga_automatica: data.transaccion?.recarga_automatica
       });
     } catch (err) {
-      setError(err.response?.data?.error || 'Error al procesar la transferencia');
+      setError(err.response?.data?.error || err.response?.data?.message || 'Error al procesar la transferencia');
     } finally {
       setLoading(false);
     }
