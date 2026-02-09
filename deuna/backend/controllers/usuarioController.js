@@ -1,4 +1,6 @@
 const Usuario = require('../models/Usuario');
+const Transaccion = require('../models/Transaccion');
+const Auditoria = require('../models/Auditoria');
 
 /**
  * Obtener datos del usuario autenticado
@@ -85,10 +87,39 @@ exports.recargar = async (req, res, next) => {
     usuario.saldo_deuna += monto;
     await usuario.save();
 
+    // Crear transacción de recarga para el historial
+    const transaccion = new Transaccion({
+      tipo: 'recarga',
+      emisor_id: userId,
+      receptor_id: userId, // Mismo usuario (de BP a Deuna)
+      monto: monto,
+      comision: 0,
+      monto_total: monto,
+      fuente: 'bp',
+      estado: 'completada',
+      descripcion: 'Recarga desde Banco Pichincha'
+    });
+    await transaccion.save();
+
+    // Registrar auditoría
+    await Auditoria.create({
+      usuario_id: userId,
+      accion: 'RECARGA',
+      entidad: 'Transaccion',
+      descripcion: `Recarga de $${monto.toFixed(2)} desde BP a Deuna`,
+      datos_anteriores: { saldo_bp: usuario.saldo_bp + monto, saldo_deuna: usuario.saldo_deuna - monto },
+      datos_nuevos: { saldo_bp: usuario.saldo_bp, saldo_deuna: usuario.saldo_deuna }
+    });
+
     res.json({
       mensaje: 'Recarga exitosa',
       saldo_bp: usuario.saldo_bp,
-      saldo_deuna: usuario.saldo_deuna
+      saldo_deuna: usuario.saldo_deuna,
+      transaccion: {
+        numero_transaccion: transaccion.numero_transaccion,
+        monto: transaccion.monto,
+        estado: transaccion.estado
+      }
     });
 
   } catch (error) {

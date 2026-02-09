@@ -8,7 +8,7 @@ export default function Billetera() {
   const { user, refreshUser } = useAuthStore();
   const [transacciones, setTransacciones] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filtro, setFiltro] = useState('todos'); // 'todos' | 'enviados' | 'recibidos'
+  const [filtro, setFiltro] = useState('todos'); // 'todos' | 'enviados' | 'recibidos' | 'recargas'
 
   const memoizedRefreshUser = useCallback(() => {
     refreshUser();
@@ -34,6 +34,7 @@ export default function Billetera() {
     if (filtro === 'todos') return true;
     if (filtro === 'enviados') return tx.direccion === 'enviado';
     if (filtro === 'recibidos') return tx.direccion === 'recibido';
+    if (filtro === 'recargas') return tx.direccion === 'recarga' || tx.tipo === 'recarga';
     return true;
   });
 
@@ -84,6 +85,7 @@ export default function Billetera() {
             { key: 'todos', label: 'Todos' },
             { key: 'enviados', label: 'Enviados' },
             { key: 'recibidos', label: 'Recibidos' },
+            { key: 'recargas', label: 'Recargas' },
           ].map((f) => (
             <button
               key={f.key}
@@ -118,28 +120,54 @@ export default function Billetera() {
               <div className="bg-white rounded-xl shadow-sm divide-y">
                 {txs.map((tx) => {
                   const esEnvio = tx.direccion === 'enviado';
+                  const esRecarga = tx.direccion === 'recarga' || tx.tipo === 'recarga';
+
+                  // Determinar colores e ícono según tipo
+                  let bgColor, iconColor, signo, montoColor, label;
+                  if (esRecarga) {
+                    bgColor = 'bg-blue-100';
+                    iconColor = 'text-blue-600';
+                    signo = '+';
+                    montoColor = 'text-blue-600';
+                    label = 'Recarga BP → Deuna';
+                  } else if (esEnvio) {
+                    bgColor = 'bg-red-100';
+                    iconColor = 'text-red-600';
+                    signo = '-';
+                    montoColor = 'text-red-600';
+                    label = 'Pago enviado';
+                  } else {
+                    bgColor = 'bg-green-100';
+                    iconColor = 'text-green-600';
+                    signo = '+';
+                    montoColor = 'text-green-600';
+                    label = 'Pago recibido';
+                  }
+
                   return (
                     <div key={tx.id} className="flex items-center justify-between p-4">
                       <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                          esEnvio ? 'bg-red-100' : 'bg-green-100'
-                        }`}>
-                          {esEnvio ? (
-                            <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${bgColor}`}>
+                          {esRecarga ? (
+                            <svg className={`w-5 h-5 ${iconColor}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                          ) : esEnvio ? (
+                            <svg className={`w-5 h-5 ${iconColor}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
                             </svg>
                           ) : (
-                            <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className={`w-5 h-5 ${iconColor}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
                             </svg>
                           )}
                         </div>
                         <div>
                           <p className="font-medium text-gray-900">
-                            {tx.contraparte?.nombre} {tx.contraparte?.apellido}
+                            {esRecarga ? 'Banco Pichincha' : `${tx.contraparte?.nombre} ${tx.contraparte?.apellido}`}
                           </p>
                           <p className="text-xs text-gray-500">
-                            {esEnvio ? 'Pago enviado' : 'Pago recibido'}
+                            {label}
                             {tx.recarga_automatica && (
                               <span className="ml-1 text-green-600">• Recarga auto</span>
                             )}
@@ -152,8 +180,8 @@ export default function Billetera() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <span className={`font-semibold ${esEnvio ? 'text-red-600' : 'text-green-600'}`}>
-                          {esEnvio ? '-' : '+'}{formatMonto(tx.monto)}
+                        <span className={`font-semibold ${montoColor}`}>
+                          {signo}{formatMonto(tx.monto)}
                         </span>
                         <p className="text-xs text-gray-400">
                           {new Date(tx.fecha).toLocaleTimeString('es-EC', {

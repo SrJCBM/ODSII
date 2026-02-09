@@ -1,0 +1,452 @@
+{
+  "info": {
+    "name": "DEUNA - API Examen",
+    "description": "Colección para demostrar TRANSFERIR y RECARGA con consultas avanzadas",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "1. Auth",
+      "item": [
+        {
+          "name": "Login (Julio)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('token', jsonData.token);",
+                  "    pm.collectionVariables.set('userId', jsonData.usuario._id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"jcblaciomachuca@gmail.com\",\n  \"password\": \"Julio38_\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login (María)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"maria.gonzalez@ejemplo.com\",\n  \"password\": \"Maria123!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Transferencias",
+      "item": [
+        {
+          "name": "Transferir por CUENTA ($25)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"destinatario\": \"2212345678\",\n  \"monto\": 25,\n  \"descripcion\": \"Demo examen - Transferencia por cuenta\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/transferencias",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transferencias"]
+            }
+          }
+        },
+        {
+          "name": "Transferir por TELÉFONO ($50)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"destinatario\": \"0995678901\",\n  \"monto\": 50,\n  \"descripcion\": \"Demo examen - Transferencia por teléfono\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/transferencias",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transferencias"]
+            }
+          }
+        },
+        {
+          "name": "Transferir por CORREO ($100)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"destinatario\": \"diego.herrera@ejemplo.com\",\n  \"monto\": 100,\n  \"descripcion\": \"Demo examen - Transferencia por correo\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/transferencias",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transferencias"]
+            }
+          }
+        },
+        {
+          "name": "Buscar usuario por cuenta",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/buscar?cuenta=2212345678",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "usuarios", "buscar"],
+              "query": [
+                {
+                  "key": "cuenta",
+                  "value": "2212345678"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Buscar usuario por teléfono",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/buscar?telefono=0995678901",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "usuarios", "buscar"],
+              "query": [
+                {
+                  "key": "telefono",
+                  "value": "0995678901"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Recarga",
+      "item": [
+        {
+          "name": "Recargar $50",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"monto\": 50\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/recargar",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "usuarios", "recargar"]
+            }
+          }
+        },
+        {
+          "name": "Recargar $200",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"monto\": 200\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/recargar",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "usuarios", "recargar"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Consultas Avanzadas",
+      "item": [
+        {
+          "name": "Consulta: Completadas (últimas 10)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones/consulta?estado=completada&limite=10&ordenar=fecha&orden=desc",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones", "consulta"],
+              "query": [
+                {
+                  "key": "estado",
+                  "value": "completada"
+                },
+                {
+                  "key": "limite",
+                  "value": "10"
+                },
+                {
+                  "key": "ordenar",
+                  "value": "fecha"
+                },
+                {
+                  "key": "orden",
+                  "value": "desc"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Consulta: Monto > $50",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones/consulta?monto_min=50&ordenar=monto&orden=desc",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones", "consulta"],
+              "query": [
+                {
+                  "key": "monto_min",
+                  "value": "50"
+                },
+                {
+                  "key": "ordenar",
+                  "value": "monto"
+                },
+                {
+                  "key": "orden",
+                  "value": "desc"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Consulta: Por rango de fechas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones/consulta?desde=2026-02-01&hasta=2026-02-09&limite=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones", "consulta"],
+              "query": [
+                {
+                  "key": "desde",
+                  "value": "2026-02-01"
+                },
+                {
+                  "key": "hasta",
+                  "value": "2026-02-09"
+                },
+                {
+                  "key": "limite",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Consulta: Transferencias completadas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones/consulta?tipo=transferencia&estado=completada&limite=15",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones", "consulta"],
+              "query": [
+                {
+                  "key": "tipo",
+                  "value": "transferencia"
+                },
+                {
+                  "key": "estado",
+                  "value": "completada"
+                },
+                {
+                  "key": "limite",
+                  "value": "15"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Reporte Mensual",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones/reporte?periodo=mes&desde=2026-01-01",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones", "reporte"],
+              "query": [
+                {
+                  "key": "periodo",
+                  "value": "mes"
+                },
+                {
+                  "key": "desde",
+                  "value": "2026-01-01"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Reporte Semanal",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones/reporte?periodo=semana&desde=2026-02-01",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones", "reporte"],
+              "query": [
+                {
+                  "key": "periodo",
+                  "value": "semana"
+                },
+                {
+                  "key": "desde",
+                  "value": "2026-02-01"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Búsqueda por texto",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones/consulta?buscar=demo",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones", "consulta"],
+              "query": [
+                {
+                  "key": "buscar",
+                  "value": "demo"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Usuario (Info)",
+      "item": [
+        {
+          "name": "Mi perfil",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "usuarios", "me"]
+            }
+          }
+        },
+        {
+          "name": "Todas las transacciones (mías)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://deuna-backend-r7lw.onrender.com",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "userId",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

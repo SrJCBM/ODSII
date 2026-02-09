@@ -23,6 +23,29 @@ exports.getTransacciones = async (req, res, next) => {
     // Formatear respuesta indicando si fue pago enviado o recibido
     const transaccionesFormateadas = transacciones.map(t => {
       const esEmisor = t.emisor_id._id.toString() === userId;
+      const esRecarga = t.tipo === 'recarga' && t.emisor_id._id.toString() === t.receptor_id._id.toString();
+
+      if (esRecarga) {
+        return {
+          id: t._id,
+          numero_transaccion: t.numero_transaccion,
+          tipo: t.tipo,
+          monto: t.monto,
+          fuente: t.fuente,
+          recarga_automatica: false,
+          monto_recargado: 0,
+          estado: t.estado,
+          descripcion: t.descripcion || 'Recarga desde Banco Pichincha',
+          fecha: t.createdAt,
+          direccion: 'recarga',
+          contraparte: {
+            nombre: 'Banco',
+            apellido: 'Pichincha',
+            cuenta_masked: 'BP → Deuna'
+          }
+        };
+      }
+
       return {
         id: t._id,
         numero_transaccion: t.numero_transaccion,
