@@ -112,7 +112,7 @@ usuarioSchema.methods.toMinimalJSON = function() {
     id: this._id,
     nombre: this.nombre,
     apellido: this.apellido,
-    numero_cuenta_masked: '******' + this.numero_cuenta.slice(-4)
+    numero_cuenta: this.numero_cuenta
   };
 };
 

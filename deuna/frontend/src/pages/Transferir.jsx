@@ -126,8 +126,11 @@ export default function Transferir() {
             </div>
             
             <h2 className="text-xl font-bold text-gray-900 mb-2">¡Transferencia exitosa!</h2>
-            <p className="text-gray-500 mb-4">
+            <p className="text-gray-500 mb-2">
               Enviaste a {success.destinatario?.nombre} {success.destinatario?.apellido}
+            </p>
+            <p className="text-gray-400 text-sm mb-4">
+              Cuenta: {success.destinatario?.numero_cuenta}
             </p>
             
             <div className="text-4xl font-bold text-green-600 mb-2">
@@ -263,8 +266,8 @@ export default function Transferir() {
               </div>
               <div className="text-white">
                 <p className="font-semibold">{destinatario.nombre} {destinatario.apellido}</p>
-                <p className="text-sm text-purple-200">
-                  ******{destinatario.numero_cuenta?.slice(-4)}
+                <p className="text-sm text-purple-200 font-mono">
+                  Cuenta: {destinatario.numero_cuenta}
                 </p>
               </div>
             </div>
@@ -369,8 +372,8 @@ export default function Transferir() {
                   <p className="font-semibold text-gray-900">
                     {destinatario.nombre} {destinatario.apellido}
                   </p>
-                  <p className="text-sm text-gray-500">
-                    Cuenta ******{destinatario.numero_cuenta?.slice(-4)}
+                  <p className="text-sm text-gray-500 font-mono">
+                    Cuenta: {destinatario.numero_cuenta}
                   </p>
                 </div>
               </div>
