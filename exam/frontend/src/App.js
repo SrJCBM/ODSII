@@ -145,36 +145,6 @@ function App() {
     }
   };
 
-  // Search product and calculate tax
-  const searchProduct = async () => {
-    if (!searchName || searchName.trim() === '') {
-      setProductError('Please enter a product name to search');
-      setProductResult(null);
-      return;
-    }
-
-    setProductLoading(true);
-    setProductError('');
-
-    try {
-      const response = await fetch(`${API_URL}/api/products/search/${encodeURIComponent(searchName)}`);
-      const data = await response.json();
-
-      if (response.ok) {
-        setProductResult(data);
-        setProductError('');
-      } else {
-        setProductError(data.error || 'Product not found');
-        setProductResult(null);
-      }
-    } catch (err) {
-      setProductError('Connection error with server');
-      setProductResult(null);
-    } finally {
-      setProductLoading(false);
-    }
-  };
-
   const clearProductSearch = () => {
     setSearchName('');
     setProductResult(null);
@@ -208,6 +178,44 @@ function App() {
     setSearchName(productName);
     setShowSuggestions(false);
     setFilteredSuggestions([]);
+    
+    // Automatically search for the selected product
+    searchProductByName(productName);
+  };
+
+  // Search product by name (used by both button click and suggestion selection)
+  const searchProductByName = async (name) => {
+    setProductLoading(true);
+    setProductError('');
+
+    try {
+      const response = await fetch(`${API_URL}/api/products/search/${encodeURIComponent(name)}`);
+      const data = await response.json();
+
+      if (response.ok) {
+        setProductResult(data);
+        setProductError('');
+      } else {
+        setProductError(data.error || 'Product not found');
+        setProductResult(null);
+      }
+    } catch (err) {
+      setProductError('Connection error with server');
+      setProductResult(null);
+    } finally {
+      setProductLoading(false);
+    }
+  };
+
+  // Search product and calculate tax
+  const searchProduct = async () => {
+    if (!searchName || searchName.trim() === '') {
+      setProductError('Please enter a product name to search');
+      setProductResult(null);
+      return;
+    }
+
+    searchProductByName(searchName);
   };
 
   return (
