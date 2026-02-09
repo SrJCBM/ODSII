@@ -28,6 +28,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/usuarios', require('./routes/usuarios'));
 app.use('/api/pagos', require('./routes/pagos'));
 app.use('/api/transacciones', require('./routes/transacciones'));
+app.use('/api/transferencias', require('./routes/transferencias'));
 
 // Ruta de prueba
 app.get('/', (req, res) => {

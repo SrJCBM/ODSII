@@ -95,3 +95,50 @@ exports.recargar = async (req, res, next) => {
     next(error);
   }
 };
+
+/**
+ * Buscar usuario por cuenta, teléfono o correo
+ * GET /api/usuarios/buscar?cuenta=XXX&telefono=XXX&correo=XXX
+ */
+exports.buscar = async (req, res, next) => {
+  try {
+    const { cuenta, telefono, correo } = req.query;
+    const userId = req.userId;
+    
+    let query = {};
+    
+    if (cuenta) {
+      query.numero_cuenta = cuenta;
+    } else if (telefono) {
+      query.telefono = telefono;
+    } else if (correo) {
+      query.correo = correo.toLowerCase();
+    } else {
+      return res.status(400).json({
+        error: 'Debes proporcionar cuenta, teléfono o correo'
+      });
+    }
+
+    const usuario = await Usuario.findOne(query);
+    
+    if (!usuario) {
+      return res.status(404).json({
+        error: 'Usuario no encontrado'
+      });
+    }
+
+    // No permitir transferirse a sí mismo
+    if (usuario._id.toString() === userId) {
+      return res.status(400).json({
+        error: 'No puedes transferirte a ti mismo'
+      });
+    }
+
+    res.json({
+      usuario: usuario.toMinimalJSON()
+    });
+
+  } catch (error) {
+    next(error);
+  }
+};

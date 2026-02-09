@@ -11,6 +11,7 @@ import PagarQR from './pages/PagarQR';
 import ConfirmarPago from './pages/ConfirmarPago';
 import Cobrar from './pages/Cobrar';
 import Recargar from './pages/Recargar';
+import Transferir from './pages/Transferir';
 import Billetera from './pages/Billetera';
 import Beneficios from './pages/Beneficios';
 import Perfil from './pages/Perfil';
@@ -80,6 +81,14 @@ function App() {
           element={
             <ProtectedRoute>
               <Recargar />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/transferir"
+          element={
+            <ProtectedRoute>
+              <Transferir />
             </ProtectedRoute>
           }
         />

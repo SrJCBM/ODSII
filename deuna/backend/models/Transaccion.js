@@ -41,12 +41,39 @@ const transaccionSchema = new mongoose.Schema({
   },
   estado: {
     type: String,
-    enum: ['completada', 'pendiente', 'fallida'],
-    default: 'completada'
+    enum: ['pendiente', 'completada', 'fallida', 'reversada', 'expirada'],
+    default: 'pendiente'
   },
   descripcion: {
     type: String,
     default: ''
+  },
+  // Campos para comisiones
+  comision: {
+    type: Number,
+    default: 0
+  },
+  monto_total: {
+    type: Number // monto + comisión
+  },
+  // Para QR con expiración
+  expira_en: {
+    type: Date
+  },
+  // Referencia para cobros
+  referencia: {
+    type: String
+  },
+  // Para reversos
+  transaccion_original_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Transaccion'
+  },
+  motivo_reverso: {
+    type: String
+  },
+  reversada_en: {
+    type: Date
   }
 }, {
   timestamps: true
