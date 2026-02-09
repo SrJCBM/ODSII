@@ -193,7 +193,9 @@ export default function Transferir() {
         {[1, 2, 3].map(s => (
           <div
             key={s}
-            className={`w-2 h-2 rounded-full ${s <= step ? 'bg-white' : 'bg-white/30'}`}
+            className={`rounded-full transition-all duration-300 ${
+              s === step ? 'w-6 h-2 bg-white' : s < step ? 'w-2 h-2 bg-white' : 'w-2 h-2 bg-white/30'
+            }`}
           />
         ))}
       </div>
@@ -258,18 +260,23 @@ export default function Transferir() {
         {step === 2 && destinatario && (
           <div className="flex-1 flex flex-col">
             {/* Destinatario info */}
-            <div className="bg-white/10 mx-4 rounded-xl p-4 flex items-center gap-4">
-              <div className="w-12 h-12 bg-purple-300 rounded-full flex items-center justify-center">
-                <span className="text-purple-900 font-bold text-lg">
+            <div className="bg-white/10 backdrop-blur-sm mx-4 rounded-2xl p-4 flex items-center gap-4 border border-white/10">
+              <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                <span className="text-white font-bold text-lg">
                   {destinatario.nombre?.[0]}{destinatario.apellido?.[0]}
                 </span>
               </div>
-              <div className="text-white">
+              <div className="text-white flex-1">
                 <p className="font-semibold">{destinatario.nombre} {destinatario.apellido}</p>
                 <p className="text-sm text-purple-200 font-mono">
                   Cuenta: {destinatario.numero_cuenta}
                 </p>
               </div>
+              <button onClick={() => setStep(1)} className="text-purple-200 hover:text-white">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
+              </button>
             </div>
 
             {/* Montos rápidos */}
@@ -290,15 +297,16 @@ export default function Transferir() {
             </div>
 
             {/* Monto display */}
-            <div className="text-center py-8">
+            <div className="text-center py-6">
               <p className="text-purple-200 text-sm mb-2">Monto a transferir</p>
               <p className="text-white text-5xl font-bold">
                 ${monto || '0'}
               </p>
               {montoNumerico > 0 && (
-                <p className="text-purple-200 text-sm mt-2">
-                  + {formatMonto(comision)} comisión = {formatMonto(total)}
-                </p>
+                <div className="mt-3 inline-flex items-center gap-2 bg-white/10 rounded-full px-4 py-1.5">
+                  <span className="text-purple-100 text-xs">Comisión {formatMonto(comision)}</span>
+                  <span className="text-white text-xs font-semibold">Total: {formatMonto(total)}</span>
+                </div>
               )}
             </div>
 
@@ -312,14 +320,20 @@ export default function Transferir() {
               />
             </div>
 
-            {/* Saldo disponible */}
-            <div className="text-center text-purple-200 text-sm mt-4">
-              Saldo Deuna: {formatMonto(user?.saldo_deuna || 0)}
-              {user?.saldo_bp > 0 && (
-                <span className="block text-xs">
-                  + {formatMonto(user.saldo_bp)} disponible en BP
-                </span>
-              )}
+            {/* Saldo disponible - pill style */}
+            <div className="mx-4 mt-4 bg-white/10 backdrop-blur-sm rounded-xl p-3 flex items-center justify-between border border-white/10">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-purple-400/30 rounded-lg flex items-center justify-center">
+                  <span className="text-sm">💰</span>
+                </div>
+                <div>
+                  <p className="text-white text-sm font-semibold">Saldo Deuna</p>
+                  {user?.saldo_bp > 0 && (
+                    <p className="text-purple-300 text-xs">+ {formatMonto(user.saldo_bp)} en BP</p>
+                  )}
+                </div>
+              </div>
+              <p className="text-white font-bold text-lg">{formatMonto(user?.saldo_deuna || 0)}</p>
             </div>
 
             {error && (
@@ -327,16 +341,16 @@ export default function Transferir() {
             )}
 
             {/* Teclado numérico */}
-            <div className="bg-white rounded-t-3xl mt-auto p-4">
-              <div className="grid grid-cols-3 gap-3">
+            <div className="bg-white rounded-t-3xl mt-auto p-4 shadow-[0_-4px_20px_rgba(0,0,0,0.1)]">
+              <div className="grid grid-cols-3 gap-2">
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9, ',', 0, 'delete'].map(num => (
                   <button
                     key={num}
                     onClick={() => handleNumPress(num)}
-                    className="h-14 rounded-xl text-xl font-semibold bg-gray-100 hover:bg-gray-200 flex items-center justify-center"
+                    className="h-12 rounded-xl text-lg font-semibold bg-gray-50 hover:bg-gray-100 active:bg-gray-200 flex items-center justify-center transition-colors"
                   >
                     {num === 'delete' ? (
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l6.414 6.414a2 2 0 001.414.586H19a2 2 0 002-2V7a2 2 0 00-2-2h-8.172a2 2 0 00-1.414.586L3 12z" />
                       </svg>
                     ) : num}
@@ -347,7 +361,7 @@ export default function Transferir() {
               <Button
                 onClick={() => montoNumerico >= 1 && setStep(3)}
                 disabled={montoNumerico < 1}
-                className="w-full mt-4"
+                className="w-full mt-3"
               >
                 Continuar
               </Button>
@@ -360,61 +374,69 @@ export default function Transferir() {
           <div className="flex-1 flex flex-col p-6">
             <h2 className="text-white text-xl font-bold mb-6 text-center">Confirmar transferencia</h2>
             
-            <div className="bg-white rounded-2xl p-6 space-y-4">
+            <div className="bg-white rounded-2xl p-5 space-y-0 shadow-lg">
               {/* Destinatario */}
-              <div className="flex items-center gap-4 pb-4 border-b">
-                <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                  <span className="text-purple-700 font-bold">
+              <div className="flex items-center gap-3 pb-4 border-b border-gray-100">
+                <div className="w-11 h-11 bg-gradient-to-br from-purple-500 to-purple-700 rounded-full flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">
                     {destinatario.nombre?.[0]}{destinatario.apellido?.[0]}
                   </span>
                 </div>
-                <div>
-                  <p className="font-semibold text-gray-900">
+                <div className="flex-1">
+                  <p className="font-semibold text-gray-900 text-sm">
                     {destinatario.nombre} {destinatario.apellido}
                   </p>
-                  <p className="text-sm text-gray-500 font-mono">
+                  <p className="text-xs text-gray-400 font-mono">
                     Cuenta: {destinatario.numero_cuenta}
                   </p>
                 </div>
               </div>
 
+              {/* Monto grande centrado */}
+              <div className="text-center py-4 border-b border-gray-100">
+                <p className="text-gray-400 text-xs mb-1">Monto a transferir</p>
+                <p className="text-3xl font-bold text-gray-900">{formatMonto(montoNumerico)}</p>
+              </div>
+
               {/* Detalles */}
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Monto</span>
-                  <span className="font-semibold">{formatMonto(montoNumerico)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Comisión (0.5%)</span>
-                  <span className="font-semibold">{formatMonto(comision)}</span>
+              <div className="py-3 space-y-2.5">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400 text-sm">Comisión (0.5%)</span>
+                  <span className="font-medium text-sm text-gray-700">{formatMonto(comision)}</span>
                 </div>
                 {descripcion && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Descripción</span>
-                    <span className="text-sm text-gray-700">{descripcion}</span>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400 text-sm">Nota</span>
+                    <span className="text-sm text-gray-700 max-w-[60%] text-right">{descripcion}</span>
                   </div>
                 )}
-                <div className="border-t pt-3 flex justify-between">
-                  <span className="text-gray-900 font-medium">Total a debitar</span>
-                  <span className="font-bold text-purple-700 text-lg">{formatMonto(total)}</span>
+                <div className="border-t border-gray-100 pt-2.5 flex justify-between items-center">
+                  <span className="text-gray-900 font-semibold text-sm">Total a debitar</span>
+                  <span className="font-bold text-purple-700">{formatMonto(total)}</span>
                 </div>
               </div>
 
               {total > (user?.saldo_deuna || 0) && user?.saldo_bp > 0 && (
-                <div className="bg-orange-50 rounded-lg p-3 text-sm text-orange-700">
-                  <p className="font-medium">⚡ Recarga automática</p>
-                  <p className="text-xs mt-1">
+                <div className="bg-amber-50 rounded-xl p-3 text-sm text-amber-700 border border-amber-100">
+                  <p className="font-medium text-xs">⚡ Recarga automática</p>
+                  <p className="text-xs mt-0.5">
                     Se recargará {formatMonto(total - (user?.saldo_deuna || 0))} desde Banco Pichincha
                   </p>
                 </div>
               )}
 
               {error && (
-                <p className="text-red-500 text-sm text-center">{error}</p>
+                <p className="text-red-500 text-sm text-center pt-2">{error}</p>
               )}
             </div>
 
-            <div className="mt-auto space-y-3">
+            {/* Saldo info */}
+            <div className="mt-4 bg-white/10 backdrop-blur-sm rounded-xl p-3 flex items-center justify-between border border-white/10">
+              <span className="text-purple-200 text-sm">Tu saldo disponible</span>
+              <span className="text-white font-bold">{formatMonto(user?.saldo_deuna || 0)}</span>
+            </div>
+
+            <div className="mt-auto pt-6 space-y-3">
               <Button
                 onClick={handleConfirmar}
                 loading={loading}
@@ -424,7 +446,7 @@ export default function Transferir() {
               </Button>
               <button
                 onClick={() => setStep(2)}
-                className="w-full py-3 text-white font-medium"
+                className="w-full py-2.5 text-white/80 hover:text-white font-medium text-sm transition"
               >
                 Modificar
               </button>
