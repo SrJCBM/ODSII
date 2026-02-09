@@ -88,38 +88,48 @@ exports.recargar = async (req, res, next) => {
     await usuario.save();
 
     // Crear transacción de recarga para el historial
-    const transaccion = new Transaccion({
-      tipo: 'recarga',
-      emisor_id: userId,
-      receptor_id: userId, // Mismo usuario (de BP a Deuna)
-      monto: monto,
-      comision: 0,
-      monto_total: monto,
-      fuente: 'bp',
-      estado: 'completada',
-      descripcion: 'Recarga desde Banco Pichincha'
-    });
-    await transaccion.save();
+    let transaccionData = null;
+    try {
+      const transaccion = new Transaccion({
+        tipo: 'recarga',
+        emisor_id: userId,
+        receptor_id: userId,
+        monto: Number(monto),
+        comision: 0,
+        monto_total: Number(monto),
+        fuente: 'bp',
+        estado: 'completada',
+        descripcion: 'Recarga desde Banco Pichincha'
+      });
+      await transaccion.save();
+      transaccionData = {
+        numero_transaccion: transaccion.numero_transaccion,
+        monto: transaccion.monto,
+        estado: transaccion.estado
+      };
+    } catch (txError) {
+      console.error('Error al crear transacción de recarga (recarga ya procesada):', txError.message);
+    }
 
     // Registrar auditoría
-    await Auditoria.create({
-      usuario_id: userId,
-      accion: 'RECARGA',
-      entidad: 'Transaccion',
-      descripcion: `Recarga de $${monto.toFixed(2)} desde BP a Deuna`,
-      datos_anteriores: { saldo_bp: usuario.saldo_bp + monto, saldo_deuna: usuario.saldo_deuna - monto },
-      datos_nuevos: { saldo_bp: usuario.saldo_bp, saldo_deuna: usuario.saldo_deuna }
-    });
+    try {
+      await Auditoria.create({
+        usuario_id: userId,
+        accion: 'RECARGA',
+        entidad: 'Transaccion',
+        descripcion: `Recarga de $${Number(monto).toFixed(2)} desde BP a Deuna`,
+        datos_anteriores: { saldo_bp: usuario.saldo_bp + monto, saldo_deuna: usuario.saldo_deuna - monto },
+        datos_nuevos: { saldo_bp: usuario.saldo_bp, saldo_deuna: usuario.saldo_deuna }
+      });
+    } catch (auditError) {
+      console.error('Error al crear auditoría:', auditError.message);
+    }
 
     res.json({
       mensaje: 'Recarga exitosa',
       saldo_bp: usuario.saldo_bp,
       saldo_deuna: usuario.saldo_deuna,
-      transaccion: {
-        numero_transaccion: transaccion.numero_transaccion,
-        monto: transaccion.monto,
-        estado: transaccion.estado
-      }
+      transaccion: transaccionData
     });
 
   } catch (error) {
