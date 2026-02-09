@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 
@@ -17,6 +17,28 @@ function App() {
   const [productResult, setProductResult] = useState(null);
   const [productError, setProductError] = useState('');
   const [productLoading, setProductLoading] = useState(false);
+  
+  // State for autocomplete
+  const [allProducts, setAllProducts] = useState([]);
+  const [filteredSuggestions, setFilteredSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  // Load all products on component mount
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch(`${API_URL}/api/products`);
+        if (response.ok) {
+          const data = await response.json();
+          setAllProducts(data);
+        }
+      } catch (err) {
+        console.error('Error loading products:', err);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   // Function to calculate IVA via backend API
   const calculateIVA = async () => {
@@ -89,7 +111,14 @@ function App() {
 
     setProductLoading(true);
     setProductError('');
-
+  
+        // Refresh product list
+        const productsResponse = await fetch(`${API_URL}/api/products`);
+        if (productsResponse.ok) {
+          const data = await productsResponse.json();
+          setAllProducts(data);
+        }
+      
     try {
       const response = await fetch(`${API_URL}/api/products`, {
         method: 'POST',
@@ -126,7 +155,36 @@ function App() {
 
     setProductLoading(true);
     setProductError('');
+  setShowSuggestions(false);
+    setFilteredSuggestions([]);
+  };
 
+  // Handle search input change with autocomplete
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearchName(value);
+
+    if (value.trim() === '') {
+      setFilteredSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+
+    // Filter products that match the search term
+    const filtered = allProducts.filter(product =>
+      product.name.toLowerCase().includes(value.toLowerCase())
+    );
+
+    setFilteredSuggestions(filtered);
+    setShowSuggestions(filtered.length > 0);
+  };
+
+  // Handle suggestion selection
+  const handleSuggestionClick = (productName) => {
+    setSearchName(productName);
+    setShowSuggestions(false);
+    setFilteredSuggestions([]);
+  
     try {
       const response = await fetch(`${API_URL}/api/products/search/${encodeURIComponent(searchName)}`);
       const data = await response.json();
@@ -214,15 +272,35 @@ function App() {
 
             {result && (
               <div className="result-container">
-                <h2>Result</h2>
-                <div className="result-item">
-                  <span className="label">Price:</span>
-                  <span className="value">${result.price.toFixed(2)}</span>
-                </div>
-                <div className="result-item highlight">
-                  <span className="label">IVA ({result.ivaPercentage}%):</span>
-                  <span className="value">${result.ivaValue.toFixed(2)}</span>
-                </div>
+                <h2>Result</h2> autocomplete-container">
+              <label htmlFor="searchName">Search Product Name</label>
+              <input
+                type="text"
+                id="searchName"
+                value={searchName}
+                onChange={handleSearchChange}
+                onFocus={() => {
+                  if (filteredSuggestions.length > 0) {
+                    setShowSuggestions(true);
+                  }
+                }}
+                placeholder="Enter product name"
+                autoComplete="off"
+              />
+              {showSuggestions && filteredSuggestions.length > 0 && (
+                <ul className="suggestions-list">
+                  {filteredSuggestions.map((product) => (
+                    <li
+                      key={product._id}
+                      onClick={() => handleSuggestionClick(product.name)}
+                      className="suggestion-item"
+                    >
+                      <span className="suggestion-name">{product.name}</span>
+                      <span className="suggestion-price">${product.price.toFixed(2)}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}</div>
               </div>
             )}
           </>
