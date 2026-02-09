@@ -155,7 +155,31 @@ function App() {
 
     setProductLoading(true);
     setProductError('');
-  setShowSuggestions(false);
+
+    try {
+      const response = await fetch(`${API_URL}/api/products/search/${encodeURIComponent(searchName)}`);
+      const data = await response.json();
+
+      if (response.ok) {
+        setProductResult(data);
+        setProductError('');
+      } else {
+        setProductError(data.error || 'Product not found');
+        setProductResult(null);
+      }
+    } catch (err) {
+      setProductError('Connection error with server');
+      setProductResult(null);
+    } finally {
+      setProductLoading(false);
+    }
+  };
+
+  const clearProductSearch = () => {
+    setSearchName('');
+    setProductResult(null);
+    setProductError('');
+    setShowSuggestions(false);
     setFilteredSuggestions([]);
   };
 
@@ -184,30 +208,6 @@ function App() {
     setSearchName(productName);
     setShowSuggestions(false);
     setFilteredSuggestions([]);
-  
-    try {
-      const response = await fetch(`${API_URL}/api/products/search/${encodeURIComponent(searchName)}`);
-      const data = await response.json();
-
-      if (response.ok) {
-        setProductResult(data);
-        setProductError('');
-      } else {
-        setProductError(data.error || 'Product not found');
-        setProductResult(null);
-      }
-    } catch (err) {
-      setProductError('Connection error with server');
-      setProductResult(null);
-    } finally {
-      setProductLoading(false);
-    }
-  };
-
-  const clearProductSearch = () => {
-    setSearchName('');
-    setProductResult(null);
-    setProductError('');
   };
 
   return (
@@ -272,35 +272,15 @@ function App() {
 
             {result && (
               <div className="result-container">
-                <h2>Result</h2> autocomplete-container">
-              <label htmlFor="searchName">Search Product Name</label>
-              <input
-                type="text"
-                id="searchName"
-                value={searchName}
-                onChange={handleSearchChange}
-                onFocus={() => {
-                  if (filteredSuggestions.length > 0) {
-                    setShowSuggestions(true);
-                  }
-                }}
-                placeholder="Enter product name"
-                autoComplete="off"
-              />
-              {showSuggestions && filteredSuggestions.length > 0 && (
-                <ul className="suggestions-list">
-                  {filteredSuggestions.map((product) => (
-                    <li
-                      key={product._id}
-                      onClick={() => handleSuggestionClick(product.name)}
-                      className="suggestion-item"
-                    >
-                      <span className="suggestion-name">{product.name}</span>
-                      <span className="suggestion-price">${product.price.toFixed(2)}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}</div>
+                <h2>Result</h2>
+                <div className="result-item">
+                  <span className="label">Price:</span>
+                  <span className="value">${result.price.toFixed(2)}</span>
+                </div>
+                <div className="result-item highlight">
+                  <span className="label">IVA ({result.ivaPercentage}%):</span>
+                  <span className="value">${result.ivaValue.toFixed(2)}</span>
+                </div>
               </div>
             )}
           </>
@@ -345,15 +325,35 @@ function App() {
             <div className="divider"></div>
 
             <div className="section-title">Find Product & See Tax</div>
-            <div className="input-group">
+            <div className="input-group autocomplete-container">
               <label htmlFor="searchName">Search Product Name</label>
               <input
                 type="text"
                 id="searchName"
                 value={searchName}
-                onChange={(e) => setSearchName(e.target.value)}
+                onChange={handleSearchChange}
+                onFocus={() => {
+                  if (filteredSuggestions.length > 0) {
+                    setShowSuggestions(true);
+                  }
+                }}
                 placeholder="Enter product name"
+                autoComplete="off"
               />
+              {showSuggestions && filteredSuggestions.length > 0 && (
+                <ul className="suggestions-list">
+                  {filteredSuggestions.map((product) => (
+                    <li
+                      key={product._id}
+                      onClick={() => handleSuggestionClick(product.name)}
+                      className="suggestion-item"
+                    >
+                      <span className="suggestion-name">{product.name}</span>
+                      <span className="suggestion-price">${product.price.toFixed(2)}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
 
             <div className="button-group">
